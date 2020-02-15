@@ -1,0 +1,40 @@
+function findSlice(arr, target) {
+    let sum = arr.reduce((a, c) => a + c, 0)
+    let length = arr.length
+    if(sum <= target) return Math.max(...arr)
+    
+    const round = (num) => {
+        let withoutRest = num | 0
+        if(num - withoutRest > .5) {
+            return withoutRest + 1
+        }
+        return withoutRest
+    }
+    
+    let diff = sum - target
+    
+    arr.sort((a, b) => b - a)
+    
+    let min = arr[length - 1]
+    if(min * length >= target) {
+        return round(target / length)
+    }
+    
+    let difs = [arr[0] - arr[1]]
+    
+    for(let i = 1, len = length - 1; i < len; i++){
+        difs[i] = difs[i - 1] + (i + 1) * (arr[i] - arr[i + 1])
+        if(difs[i] - diff > 0) break
+    }
+    
+    difs = difs.map(c => c - diff)
+    
+    let right = difs.length
+    let border1 = difs.pop()
+    let border2 = difs.pop()
+    let weight = border1 / (border1 - border2) * (arr[right - 1] - arr[right])
+
+    return round(weight) + arr[right]
+}
+
+module.exports = findSlice
